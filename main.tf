@@ -38,7 +38,7 @@ resource "aws_route_table" "public" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
+    gateway_id = aws_internet_gateway.main[count.index].id
   }
 
   tags = merge(var.tags, map("Name", format("%s-public", var.name)))
@@ -176,7 +176,7 @@ resource "aws_security_group" "bastion" {
 resource "aws_security_group_rule" "ssh" {
   count = "${var.create && var.bastion_count > 0 ? 1 : 0}"
 
-  security_group_id = aws_security_group.bastion.id
+  security_group_id = aws_security_group.bastion[count.index].id
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 22
