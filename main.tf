@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.11.5"
+  required_version = ">= 0.12"
 }
 
 data "aws_availability_zones" "main" {}
@@ -99,7 +99,7 @@ resource "aws_route_table_association" "private" {
 }
 
 module "consul_auto_join_instance_role" {
-  source = "github.com/hashicorp-modules/consul-auto-join-instance-role-aws"
+  source = "github.com/Traibe/consul-auto-join-instance-role-aws"
 
   create = "${var.create && var.bastion_count > 0 ? 1 : 0}"
   name   = var.name
@@ -123,7 +123,7 @@ data "aws_ami" "hashistack" {
 }
 
 module "ssh_keypair_aws" {
-  source = "github.com/hashicorp-modules/ssh-keypair-aws"
+  source = "github.com/Traibe/ssh-keypair-aws"
 
   # This doesn't set the "key_name" attribute on aws_instance.bastion when uncommented,
   # there always seems to be 1.) a dirty plan that fails to set the value on apply
