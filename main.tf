@@ -156,7 +156,7 @@ data "template_file" "bastion_init" {
 }
 
 module "bastion_consul_client_sg" {
-  source = "github.com/hashicorp-modules/consul-client-ports-aws"
+  source = "github.com/Traibe/consul-client-ports-aws"
 
   create      = var.create && var.bastion_count > 0 ? 1 : 0
   name        = "${var.name}-bastion-consul-client"
