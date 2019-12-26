@@ -1,5 +1,5 @@
 output "zREADME" {
-  value = <<README
+  value = <<-README
 # ------------------------------------------------------------------------------
 # ${var.name} Network
 # ------------------------------------------------------------------------------
@@ -22,14 +22,19 @@ hosts with your public key.
 
 The public part of the key loaded into the agent ("public_key_openssh" output)
 has been placed on the target system in ~/.ssh/authorized_keys.
-  ${join("", formatlist("\n  $ ssh -A -i %s %s@%s\n", var.private_key_file == "" ? module.ssh_keypair_aws.private_key_filename : var.private_key_file, lookup(var.users, var.os), aws_instance.bastion.*.public_ip))}${var.private_key_file == "" ?
-"\nTo force the generation of a new key, the private key instance can be \"tainted\"
+
+${join("", formatlist("\n  $ ssh -A -i %s %s@%s\n", var.private_key_file == "" ? module.ssh_keypair_aws.private_key_filename : var.private_key_file, lookup(var.users, var.os), aws_instance.bastion.*.public_ip))}${var.private_key_file == "" ? <<-INNERA
+
+To force the generation of a new key, the private key instance can be \"tainted\"
 using the below command if the private key was not overridden.
 
   $ terraform taint -module=network_aws.ssh_keypair_aws.tls_private_key \\
-      tls_private_key.key"
-:
-"\nThe SSH key was generated outside of this module and overridden."}
+      tls_private_key.key
+INNERA
+: <<-INNERB
+The SSH key was generated outside of this module and overridden.
+INNERB
+}
 README
 }
 
