@@ -48,7 +48,7 @@ resource "aws_route_table_association" "public" {
   count = var.create ? length(var.vpc_cidrs_public) : 0
 
   subnet_id      = element(aws_subnet.public.*.id, count.index)
-  route_table_id = aws_route_table.public[coubnt.index].id
+  route_table_id = aws_route_table.public[count.index].id
 }
 
 resource "aws_eip" "nat" {
@@ -187,7 +187,7 @@ resource "aws_security_group_rule" "ssh" {
 resource "aws_security_group_rule" "egress_public" {
   count = "${var.create && var.bastion_count > 0 ? 1 : 0}"
 
-  security_group_id = aws_security_group.bastion[coubnt.index].id
+  security_group_id = aws_security_group.bastion[count.index].id
   type              = "egress"
   protocol          = "-1"
   from_port         = 0
