@@ -38,7 +38,7 @@ resource "aws_route_table" "public" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main[count.index].id
+    gateway_id = element(aws_internet_gateway.main.*.id)
   }
 
   tags = merge(var.tags, map("Name", format("%s-public", var.name)))
@@ -48,7 +48,7 @@ resource "aws_route_table_association" "public" {
   count = var.create == true ? length(var.vpc_cidrs_public) : 0
 
   subnet_id      = element(aws_subnet.public.*.id, count.index)
-  route_table_id = aws_route_table.public.*.id
+  route_table_id = element(aws_route_table.public.*.id, count.index)
 }
 
 resource "aws_eip" "nat" {
