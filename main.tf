@@ -52,14 +52,14 @@ resource "aws_route_table_association" "public" {
 }
 
 resource "aws_eip" "nat" {
-  count = var.create == true && var.nat_count != "-1" ? var.nat_count > 0 : var.create == true ? length(var.vpc_cidrs_public) : 0
+  count = var.create == true && var.nat_count != -1 ? var.nat_count : var.create == true ? length(var.vpc_cidrs_public) : 0
   vpc   = true
 
   tags = merge(var.tags, map("Name", format("%s-%d", var.name, count.index + 1)))
 }
 
 resource "aws_nat_gateway" "nat" {
-  count = var.create == true && var.nat_count != "-1" ? var.nat_count > 0 : var.create == true ? length(var.vpc_cidrs_public) : 0
+  count = var.create == true && var.nat_count != -1 ? var.nat_count : var.create == true ? length(var.vpc_cidrs_public) : 0
 
   allocation_id = element(aws_eip.nat.*.id, count.index)
   subnet_id     = element(aws_subnet.public.*.id, count.index)
@@ -146,7 +146,7 @@ module "ssh_keypair_aws" {
 }
 
 data "template_file" "bastion_init" {
-  count    = var.create == true && var.bastion_count != -1 ? var.bastion_count > 0 : var.create == true ? length(var.vpc_cidrs_public) : 0
+  count    = var.create == true && var.bastion_count != -1 ? var.bastion_count : var.create == true ? length(var.vpc_cidrs_public) : 0
   template = file("${path.module}/templates/init-systemd.sh.tpl")
 
   vars = {
@@ -196,7 +196,7 @@ resource "aws_security_group_rule" "egress_public" {
 }
 
 resource "aws_instance" "bastion" {
-  count = var.create == true && var.bastion_count != -1 ? var.bastion_count > 0 : var.create == true ? length(var.vpc_cidrs_public) : 0
+  count = var.create == true && var.bastion_count != -1 ? var.bastion_count : var.create == true ? length(var.vpc_cidrs_public) : 0
 
   iam_instance_profile = var.instance_profile != "" ? var.instance_profile : module.consul_auto_join_instance_role.instance_profile_id
   ami                  = var.image_id != "" ? var.image_id : element(concat(data.aws_ami.hashistack.*.id, list("")), 0) # TODO: Workaround for issue #11210
