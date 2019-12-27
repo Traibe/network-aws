@@ -48,7 +48,7 @@ resource "aws_route_table_association" "public" {
   count = var.create == true ? length(var.vpc_cidrs_public) : 0
 
   subnet_id      = element(aws_subnet.public.*.id, count.index)
-  route_table_id = aws_route_table.public[count.index].id
+  route_table_id = aws_route_table.public.*.id
 }
 
 resource "aws_eip" "nat" {
