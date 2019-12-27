@@ -38,7 +38,7 @@ resource "aws_route_table" "public" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = element(aws_internet_gateway.main.*.id)
+    gateway_id = element(aws_internet_gateway.main.*.id, count.index)
   }
 
   tags = merge(var.tags, map("Name", format("%s-public", var.name)))
